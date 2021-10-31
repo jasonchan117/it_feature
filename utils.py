@@ -21,11 +21,13 @@ def find_NP(tree, count = 0):
             new = find_NP(subtree, count)
     return max(count, new)
 def PP_follow(tree):
-    for subtree in tree:
-        if tree.label() == 'PP':
-            return True
-        if type(subtree) == nltk.tree.Tree:
-            return PP_follow(subtree)
+    # for subtree in tree:
+        # if tree.label() == 'PP':
+        #     return True
+    if len(tree) == 0:
+        return False
+    if type(tree[len(tree) - 1]) == nltk.tree.Tree and tree[len(tree) - 1].label() == 'PP':
+        return True
     return False
 
 def NP_JJ_follow(tree):

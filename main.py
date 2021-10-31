@@ -135,7 +135,7 @@ for ind, i in enumerate(raw):
                 num_NP = find_NP(NP_tree)
                 F5.append(num_NP)
             # F6 Followed by a Prepositional phrase or not !!!
-            tags = nltk.pos_tag(words[:jdex+1])
+            tags = nltk.pos_tag(words[:jdex])
             PP_tree = PP.parse(tags)
             F6.append(PP_follow(PP_tree))
             # F7The part-of-speech (POS) tags of the four tokens immediately preceding and the four tokens immediately succeeding a given instance of “it”
