@@ -6,6 +6,7 @@ from nltk.parse.stanford import StanfordDependencyParser
 import spacy
 import re
 from nltk.corpus import wordnet as wn
+from collections import Counter
 def is_atomicNP(tree):
     for subtree in tree:
         if type(subtree) == nltk.tree.Tree and subtree.label() == 'NP':
@@ -82,3 +83,55 @@ def find_ADJ_NP(tree):
             break
 
     return ans or under
+
+def process_raw_data( csv = 'results.csv'):
+    df = pd.read_csv(csv)
+    labels = np.array(df.Labels)
+    F1 = np.array(df.F1).reshape(546, 1).astype('float32')
+    F2 = np.array(df.F2).reshape(546, 1).astype('float32')
+    F3 = np.array(df.F3).reshape(546, 1).astype('float32')
+    F4 = np.array(df.F4).reshape(546, 1).astype('float32')
+    F5 = np.array(df.F5).reshape(546, 1).astype('float32')
+    F6 = np.array(df.F6).reshape(546, 1).astype('int').astype('float32')
+    F7_1 = np.array(df.F7_1).reshape(546, 1)
+    F7_2 = np.array(df.F7_2).reshape(546, 1)
+    F7_3 = np.array(df.F7_3).reshape(546, 1)
+    F7_4 = np.array(df.F7_4).reshape(546, 1)
+    F7_5 = np.array(df.F7_5).reshape(546, 1)
+    F7_6 = np.array(df.F7_6).reshape(546, 1)
+    F7_7 = np.array(df.F7_7).reshape(546, 1)
+    F7_8 = np.array(df.F7_8).reshape(546, 1)
+    # {'JJS': 36, 'FW': 35, 'POS': 34, 'CD': 33, 'PDT': 32, 'RBR': 31, "''": 30, 'UH': 29, 'VBG': 28, 'RBS': 27, 'JJR': 26, 'WDT': 25, 'EX': 24, 'PRP$': 23, 'NNS': 22, 'RP': 21, 'NNP': 20, 'VBD': 19, 'TO': 18, 'PRP': 17, ':': 16, 'VBP': 15, 'VBN': 14, 'WP': 13, '.': 12, 'VB': 11, 'MD': 10, 'WRB': 9, 'CC': 8, 'NN': 7, 'JJ': 6, 'RB': 5, 'VBZ': 4, ',': 3, 'DT': 2, 'IN': 1, 'ABS': 0}
+    F_7 = np.concatenate((F7_1, F7_2, F7_3, F7_4, F7_5, F7_6, F7_7, F7_8), axis=1)
+    F7_dict = Counter(F_7.reshape(-1))
+    for ind, i in enumerate(F7_dict.keys()):
+        F7_dict[i] = ind
+    for i in range(len(F_7)):
+        for j in range(len(F_7[i])):
+            F_7[i][j] = F7_dict[F_7[i][j]]
+    F_7 = F_7.astype('float32')
+    F8 = np.array(df.F8).reshape(546, 1).astype('int').astype('float32')
+    F9 = np.array(df.F9).reshape(546, 1).astype('int').astype('float32')
+    F10 = np.array(df.F10).reshape(546, 1).astype('float32')
+    F11 = np.array(df.F11).reshape(546, 1).astype('int').astype('float32')
+    F12 = np.array(df.F12).reshape(546, 1).astype('int').astype('float32')
+    F13 = np.array(df.F13).reshape(546, 1).astype('int').astype('float32')
+    F14 = np.array(df.F14).reshape(546, 1).astype('int').astype('float32')
+    F15 = np.array(df.F15).reshape(546, 1).astype('float32')
+    F16 = np.array(df.F16).reshape(546, 1).astype('float32')
+    F17 = np.array(df.F17).reshape(546, 1).astype('int').astype('float32')
+    F18 = np.array(df.F18).reshape(546, 1)
+    F18_dict = Counter(F18.reshape(-1))
+    # {'nsubj': 208, 'dobj': 208, 'pobj': 59, 'nsubjpass': 52, 'punct': 4, 'ROOT': 3, 'advcl': 2, 'attr': 2, 'cc': 2, 'nmod': 1, 'acomp': 1, 'neg': 1, 'advmod': 1, 'aux': 1, 'prep': 1}
+    for ind, i in enumerate(F18_dict.keys()):
+        F18_dict[i] = ind
+    for i in range(len(F18)):
+        for j in range(len(F18[i])):
+            F18[i][j] = F18_dict[F18[i][j]]
+    F18 = F18.astype('float32')
+    F19 = np.array(df.F19).reshape(546, 1).astype('int').astype('float32')
+    F20 = np.array(df.F20).reshape(546, 1).astype('int').astype('float32')
+
+    x = np.concatenate((F1, F2, F3, F4, F5, F6, F_7, F8, F9, F10, F11, F12, F13, F14, F15, F16, F17, F18, F19, F20), axis=1)
+
+    return x, labels
