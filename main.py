@@ -8,14 +8,18 @@ import re
 from nltk.corpus import wordnet as wn
 from utils import *
 from spacy import displacy
+from collection import Counter
 
 from spacy_wordnet.wordnet_annotator import WordnetAnnotator
 
-# a = "I want to buy some napkins of dog. What's in the door. I am a good man"
+# a = "It does not concern you in the least."
 # print(nltk.word_tokenize(a))
 #
 # a = nltk.pos_tag(nltk.word_tokenize(a))
 # print(a)
+#
+#
+#
 # grammar = r"""
 #   PP: {<IN><PRP>}               # Chunk prepositions followed by NP
 #   """
@@ -26,12 +30,10 @@ from spacy_wordnet.wordnet_annotator import WordnetAnnotator
 # cp = nltk.RegexpParser(grammar)
 # IV = nltk.RegexpParser(IV_grammar)
 # Tree = NP.parse(a)
-#print(Tree)
-#parser = nltk.parse.malt.MaltParser()
+# print(Tree)
+# parser = nltk.parse.malt.MaltParser()
 # Tree = cp.parse(a)
-#print(Tree)
-
-
+# print(Tree)
 #NP parser grammer
 NP_grammar = "NP: {<DT>?<JJ>*<NN>}"
 PP_grammar = "PP: {<IN><PRP>}"
@@ -209,7 +211,7 @@ for ind, i in enumerate(raw):
             # F13 Is the pronoun 'it' followed by an adjective.
             flag = False
             for k in tags[jdex:]:
-                if k[1][:2] == 'J':
+                if k[1] == 'JJ':
                     flag = True
                     break
             F13.append(flag)
