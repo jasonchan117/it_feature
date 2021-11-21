@@ -8,7 +8,7 @@ import re
 from nltk.corpus import wordnet as wn
 from utils import *
 from spacy import displacy
-from collection import Counter
+from collections import Counter
 
 from spacy_wordnet.wordnet_annotator import WordnetAnnotator
 
@@ -288,3 +288,4 @@ df['F20'] = F20
 
 df = pd.DataFrame(df)
 df.to_csv('results.csv')
+

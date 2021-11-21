@@ -6,6 +6,7 @@ from nltk.parse.stanford import StanfordDependencyParser
 import spacy
 import re
 from nltk.corpus import wordnet as wn
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 from collections import Counter
 def is_atomicNP(tree):
     for subtree in tree:
@@ -86,7 +87,7 @@ def find_ADJ_NP(tree):
 
 def process_raw_data( csv = 'results.csv'):
     df = pd.read_csv(csv)
-    labels = np.array(df.Labels)
+    labels = np.array(df.Labels == 'NomAnaph').astype('float32')
     F1 = np.array(df.F1).reshape(546, 1).astype('float32')
     F2 = np.array(df.F2).reshape(546, 1).astype('float32')
     F3 = np.array(df.F3).reshape(546, 1).astype('float32')
@@ -135,3 +136,25 @@ def process_raw_data( csv = 'results.csv'):
     x = np.concatenate((F1, F2, F3, F4, F5, F6, F_7, F8, F9, F10, F11, F12, F13, F14, F15, F16, F17, F18, F19, F20), axis=1)
 
     return x, labels
+
+def train_and_val( **param ):
+
+    accuracy_set = {'DT_model': 0., 'LR_model': 0., 'RF_model': 0., 'SVM_model': 0.}
+
+    for ind, (train_index, test_index) in enumerate(param['kf'].split(param['x'])):
+        # print('Kfold Index -->', ind + 1)
+        x_train = param['x'][train_index]
+        x_test =param['x'][test_index]
+
+        y_train = param['y'][train_index]
+        y_test = param['y'][test_index]
+        for i in param.keys():
+            if i in {'DT_model', 'LR_model', 'RF_model', 'SVM_model'}:
+                model = param[i].fit(x_train, y_train)
+                y_pred = model.predict(x_test)
+                # print(i + ':', accuracy_score(y_test, y_pred))
+                accuracy_set[i] += accuracy_score(y_test, y_pred)
+
+    for i in accuracy_set.keys():
+        accuracy_set[i] /= 10.
+    return accuracy_set
